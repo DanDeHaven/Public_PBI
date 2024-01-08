@@ -1,0 +1,38 @@
+Customer_Months = 
+UNION(
+SELECTCOLUMNS(
+    GENERATE(
+        'Customer_Start-n-End_Dates',
+        VAR CustEndDate = 'Customer_Start-n-End_Dates'[Customer End]
+        VAR CustStartDate = 'Customer_Start-n-End_Dates'[Customer Start]
+        RETURN
+            FILTER(
+                ALLNOBLANKROW( MonthEndDates[Date]),
+                    CustStartDate <= MonthEndDates[Date] &&
+                    CustEndDate > MonthEndDates[Date]
+            )
+    ),
+    "NS_Customer_ID", [NS_Customer_ID],
+    "CustomerStart", [Customer Start],
+    "CustomerEnd", [Customer End],
+    "MonthEndDate", MonthEndDates[Date],
+    "Status", "Active"
+),
+SELECTCOLUMNS(
+    GENERATE(
+        'Customer_Start-n-End_Dates',
+        VAR CustEndDate = 'Customer_Start-n-End_Dates'[Customer End]
+        VAR CustStartDate = 'Customer_Start-n-End_Dates'[Customer Start]
+        RETURN
+            FILTER(
+                ALLNOBLANKROW( MonthEndDates[Date]),
+                    
+                    CustEndDate = MonthEndDates[Date]
+            )
+    ),
+    "NS_Customer_ID", [NS_Customer_ID],
+    "CustomerStart", [Customer Start],
+    "CustomerEnd", [Customer End],
+    "MonthEndDate", MonthEndDates[Date],
+    "Status", "Inactive"
+))
