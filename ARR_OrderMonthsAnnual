@@ -1,0 +1,25 @@
+OrderMonthsAnn = 
+FILTER(
+SELECTCOLUMNS(
+    GENERATE(
+        'Annual_SalesOrderLines_Start-n-End_Dates',
+        VAR OrderEndDate = 'Annual_SalesOrderLines_Start-n-End_Dates'[EndDate OverRide]
+        VAR OrderStartDate = 'Annual_SalesOrderLines_Start-n-End_Dates'[StartDate]
+        RETURN
+            FILTER(
+                ALLNOBLANKROW( MonthEndDates[Date]),
+                    OrderStartDate >= DATEADD(DATEADD(MonthEndDates[Date],-1,YEAR),1,DAY) &&
+                    OrderStartDate <= MonthEndDates[Date] &&
+                    OrderEndDate >= MonthEndDates[Date]
+            )
+    ),
+    "NS_Transaction_ID", [NS_Transaction_ID],
+    "NS_TransactionLine_ID", [NS_TransactionLine_ID],
+    "NS_Customer_ID", [NS_Customer_ID],
+    "NS_Item_ID", [NS_Item_ID],
+    "StartDate", [StartDate],
+    "EndDate", [EndDate],
+    "MonthEndDate", [Date],
+    "KeyID", [NS_Transaction_ID] & "-" & [NS_TransactionLine_ID],
+    "CustItemDateKeyID", [NS_Customer_ID] & "-" & [NS_Item_ID] & "-" & YEAR([Date]) & MONTH([Date]) & DAY([Date])
+), NOT ( [CustItemDateKeyID] ) IN VALUES(OrderMonthsRec[CustItemDateKeyID]))
