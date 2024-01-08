@@ -1,0 +1,27 @@
+OrderMonthsAll = 
+
+SELECTCOLUMNS(
+    GENERATE(
+        'All_Start-n-End_Dates_Cust',
+        VAR OrderEndDate = 'All_Start-n-End_Dates_Cust'[EndDate OverRide]
+        VAR OrderStartDate = 'All_Start-n-End_Dates_Cust'[StartDate]
+        RETURN
+            FILTER(
+                ALLNOBLANKROW( MonthEndDates[Date]),
+                    OrderStartDate >= DATEADD(DATEADD(MonthEndDates[Date],-1,YEAR),1,DAY) &&
+                    OrderStartDate <= MonthEndDates[Date] &&
+                    OrderEndDate >= MonthEndDates[Date]
+            )
+    ),
+    "NS_Transaction_ID", [NS_Transaction_ID],
+    "NS_TransactionLine_ID", [NS_TransactionLine_ID],
+    "NS_Customer_ID", [NS_Customer_ID],
+    "NS_Item_ID", [NS_Item_ID],
+    "StartDate", [StartDate],
+    "EndDate", [EndDate],
+    "EOM_Customer_Inactive", [EOM Last Date Inactive],
+    "MonthEndDate", [Date],
+    "Inactive_Customer_Limt", [Inactive Customer Limit],
+    "KeyID", [NS_Transaction_ID] & "-" & [NS_TransactionLine_ID],
+    "CustItemDateKeyID", [NS_Customer_ID] & "-" & [NS_Item_ID] & "-" & YEAR([Date]) & MONTH([Date]) & DAY([Date])
+)
